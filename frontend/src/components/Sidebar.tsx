@@ -5,9 +5,21 @@ import { CollapsibleSection } from './CollapsibleSection';
 interface SidebarProps {
   searchValue: string;
   onSearchChange: (value: string) => void;
+  filters: {
+    application_type: string[];
+    source: string[];
+  };
+  onFilterChange: (category: 'application_type' | 'source', value: string) => void;
+  onResetFilters: () => void;
 }
 
-export const Sidebar: React.FC<SidebarProps> = ({ searchValue, onSearchChange }) => {
+export const Sidebar: React.FC<SidebarProps> = ({
+  searchValue,
+  onSearchChange,
+  filters,
+  onFilterChange,
+  onResetFilters
+}) => {
   const [fullTextSearch, setFullTextSearch] = useState(false);
 
   return (
@@ -50,7 +62,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ searchValue, onSearchChange })
       {/* Filter Sections */}
       <div className="mt-6">
         <CollapsibleSection title="Application Type">
-          {/* TODO: Add filter checkboxes here */}
+          <div className="space-y-2">
+            {['active', 'archived'].map((type) => (
+              <label key={type} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.application_type.includes(type)}
+                  onChange={() => onFilterChange('application_type', type)}
+                  className="rounded border-gray-300 text-[#047957] focus:ring-[#047957]"
+                />
+                <span className="text-sm capitalize">{type}</span>
+              </label>
+            ))}
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Jobs">
@@ -66,7 +90,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ searchValue, onSearchChange })
         </CollapsibleSection>
 
         <CollapsibleSection title="Source">
-          {/* TODO: Add filter checkboxes here */}
+          <div className="space-y-2">
+            {['LinkedIn', 'Indeed', 'Referral', 'GitHub'].map((source) => (
+              <label key={source} className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="checkbox"
+                  checked={filters.source.includes(source)}
+                  onChange={() => onFilterChange('source', source)}
+                  className="rounded border-gray-300 text-[#047957] focus:ring-[#047957]"
+                />
+                <span className="text-sm">{source}</span>
+              </label>
+            ))}
+          </div>
         </CollapsibleSection>
 
         <CollapsibleSection title="Responsibility">
@@ -83,7 +119,9 @@ export const Sidebar: React.FC<SidebarProps> = ({ searchValue, onSearchChange })
       </div>
 
       {/* Reset Filters Button */}
-      <button className="mt-6 w-full px-4 py-2 text-[#3574d6] text-[13.9px] font-light flex items-center justify-center gap-2 hover:underline">
+      <button
+        onClick={onResetFilters}
+        className="mt-6 w-full px-4 py-2 text-[#3574d6] text-[13.9px] font-light flex items-center justify-center gap-2 hover:underline">
         <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
         </svg>
