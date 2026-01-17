@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import './App.css';
 import { Sidebar } from './components/Sidebar';
 import { CandidateCard } from './components/CandidateCard';
@@ -11,30 +11,67 @@ function App() {
   const [candidates, setCandidates] = useState<Candidate[]>([]);
   const [totalPages, setTotalPages] = useState(1);
   const [total, setTotal] = useState(0);
+  const [filters, setFilters] = useState({
+    application_type: [] as string[],
+    source: [] as string[],
+  });
 
-  // TODO: Implement data fetching
-  // You should call the backend API here to get candidates
-  // Use the searchValue and currentPage state
-  // Example:
-  // useEffect(() => {
-  //   fetch(`http://localhost:8000/api/candidates?page=${currentPage}&search=${searchValue}`)
-  //     .then(res => res.json())
-  //     .then(data => {
-  //       setCandidates(data.candidates);
-  //       setTotalPages(data.total_pages);
-  //       setTotal(data.total);
-  //     });
-  // }, [currentPage, searchValue]);
+  const fetchCandidates = useCallback(async () => {
+    try {
+      const params = new URLSearchParams();
+      params.append('page', currentPage.toString());
+      params.append('per_page', '5');
+      if (searchValue) params.append('search', searchValue);
+
+      filters.application_type.forEach(type => params.append('application_type', type));
+      filters.source.forEach(source => params.append('source', source));
+
+      const response = await fetch(`http://localhost:8000/api/candidates?${params.toString()}`);
+      if (!response.ok) throw new Error('Failed to fetch');
+
+      const data = await response.json();
+      setCandidates(data.candidates);
+      setTotalPages(data.total_pages);
+      setTotal(data.total);
+    } catch (error) {
+      console.error('Error fetching candidates:', error);
+    }
+  }, [currentPage, searchValue, filters]);
+
+  useEffect(() => {
+    fetchCandidates();
+  }, [fetchCandidates]);
 
   const handleSearchChange = (value: string) => {
     setSearchValue(value);
-    setCurrentPage(1); // Reset to page 1 on new search
+    setCurrentPage(1);
   };
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
-    // TODO: Fetch new page of data
   };
+
+  const handleFilterChange = (category: 'application_type' | 'source', value: string) => {
+    setFilters(prev => {
+      const newFilters = { ...prev };
+      if (newFilters[category].includes(value)) {
+        newFilters[category] = newFilters[category].filter(item => item !== value);
+      } else {
+        newFilters[category] = [...newFilters[category], value];
+      }
+      return newFilters;
+    });
+    setCurrentPage(1); // Reset to page 1 for new filters
+  };
+
+  const handleResetFilters = () => {
+    setFilters({
+      application_type: [],
+      source: []
+    });
+    setSearchValue('');
+    setCurrentPage(1);
+  }
 
   return (
     <div className="min-h-screen bg-[#f7f8f7]">
@@ -43,7 +80,13 @@ function App() {
 
       <div className="flex">
         {/* Sidebar with pre-built components */}
-        <Sidebar searchValue={searchValue} onSearchChange={handleSearchChange} />
+        <Sidebar
+          searchValue={searchValue}
+          onSearchChange={handleSearchChange}
+          filters={filters}
+          onFilterChange={handleFilterChange}
+          onResetFilters={handleResetFilters}
+        />
 
         {/* Main Content */}
         <main className="flex-1 px-6">
