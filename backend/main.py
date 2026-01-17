@@ -88,21 +88,18 @@ def get_candidates(
     # TODO: Implement sorting logic
     # =============================================================================
     # Sort by the specified field and order
-    # HINT: Use Python's sorted() function with a key and reverse parameter
-    #
-    # Example for sorting by last_activity:
-    # if sort_by == 'last_activity':
-    #     candidates = sorted(
-    #         candidates,
-    #         key=lambda x: x['last_activity'],
-    #         reverse=(sort_order == 'desc')
-    #     )
-    # elif sort_by == 'name':
-    #     candidates = sorted(
-    #         candidates,
-    #         key=lambda x: x['name'].lower(),
-    #         reverse=(sort_order == 'desc')
-    #     )
+    if sort_by == 'last_activity':
+        candidates = sorted(
+            candidates,
+            key=lambda x: x['last_activity'],
+            reverse=(sort_order == 'desc')
+        )
+    elif sort_by == 'name':
+        candidates = sorted(
+            candidates,
+            key=lambda x: x['name'].lower(),
+            reverse=(sort_order == 'desc')
+        )
 
     # =============================================================================
     # TODO: Implement pagination logic
