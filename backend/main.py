@@ -105,12 +105,11 @@ def get_candidates(
     # TODO: Implement pagination logic
     # =============================================================================
     # Calculate pagination indices and slice the data
-    # HINT:
-    # total = len(candidates)  # After filtering!
-    # start_idx = (page - 1) * per_page
-    # end_idx = start_idx + per_page
-    # paginated_candidates = candidates[start_idx:end_idx]
-    # total_pages = (total + per_page - 1) // per_page  # Ceiling division
+    total = len(candidates)  # After filtering!
+    start_idx = (page - 1) * per_page
+    end_idx = start_idx + per_page
+    paginated_candidates = candidates[start_idx:end_idx]
+    total_pages = (total + per_page - 1) // per_page  # Ceiling division
 
     # =============================================================================
     # TODO: Return properly formatted response
@@ -122,13 +121,12 @@ def get_candidates(
     # - per_page: Items per page
     # - total_pages: Total number of pages
 
-    # PLACEHOLDER - Replace with your implementation
     return {
-        "candidates": candidates[:per_page],  # TODO: Use paginated_candidates
-        "total": len(candidates),
+        "candidates": paginated_candidates,
+        "total": total,
         "page": page,
         "per_page": per_page,
-        "total_pages": (len(candidates) + per_page - 1) // per_page
+        "total_pages": total_pages
     }
 
 
