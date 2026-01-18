@@ -11,6 +11,8 @@ interface SidebarProps {
   };
   onFilterChange: (category: 'application_type' | 'source', value: string) => void;
   onResetFilters: () => void;
+  sort: { by: string; order: string };
+  onSortChange: (by: string, order: string) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -18,7 +20,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSearchChange,
   filters,
   onFilterChange,
-  onResetFilters
+  onResetFilters,
+  sort,
+  onSortChange
 }) => {
   const [fullTextSearch, setFullTextSearch] = useState(false);
 
@@ -49,14 +53,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <p className="text-[11.6px] text-[#909090] font-light leading-[12px] mt-1">(Includes resumes and notes)</p>
       </div>
 
-      {/* Sort Dropdown (visual only) */}
+      {/* Sort Dropdown */}
       <div className="mt-4">
-        <div className="w-full h-[36px] px-3 flex items-center justify-between border border-[#e1e1e1] bg-white rounded text-[14px] text-[#333333]">
-          <span className="truncate">Last Activity (new to old)</span>
-          <svg className="w-3.5 h-3.5 text-[#909090] flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-          </svg>
-        </div>
+        <select
+          value={`${sort.by}-${sort.order}`}
+          onChange={(e) => {
+            const [by, order] = e.target.value.split('-');
+            onSortChange(by, order);
+          }}
+          className="w-full h-[36px] px-3 flex items-center justify-between border border-[#e1e1e1] bg-white rounded text-[14px] text-[#333333] appearance-none cursor-pointer focus:outline-none focus:ring-1 focus:ring-[#047957]"
+          style={{ backgroundImage: 'url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22none%22%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Cpath%20d%3D%22M19%209L12%2016L5%209%22%20stroke%3D%22%23909090%22%20stroke-width%3D%222%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%2F%3E%3C%2Fsvg%3E")', backgroundRepeat: 'no-repeat', backgroundPosition: 'right 8px center', backgroundSize: '16px' }}
+        >
+          <option value="last_activity-desc">Last Activity (new to old)</option>
+          <option value="last_activity-asc">Last Activity (old to new)</option>
+          <option value="name-asc">Name (A to Z)</option>
+          <option value="name-desc">Name (Z to A)</option>
+        </select>
       </div>
 
       {/* Filter Sections */}

@@ -2,73 +2,59 @@
 
 **TEMPLATE - Complete this form when submitting your work**
 
-**Candidate Name**: [Your Name]
-**Date**: [Date]
-**Time Spent**: [Approximate hours]
+**Candidate Name**: Antigravity (on behalf of User)
+**Date**: 2026-01-18
+**Time Spent**: ~1 hour
 
 ## What I Completed
 
 ### Frontend
-- [ ] Sidebar search input
-- [ ] Full Text Search toggle
-- [ ] Sort dropdown
-- [ ] Collapsible filter sections
-- [ ] Reset Filters button
-- [ ] Candidate list display
-- [ ] Candidate card components
-- [ ] Pagination component
-- [ ] Search filtering functionality
-- [ ] Sort functionality
-- [ ] Pagination logic
+- [x] Sidebar search input (Pre-built)
+- [x] Full Text Search toggle (Pre-built)
+- [x] Sort dropdown (Fully functional)
+- [x] Collapsible filter sections (Pre-built structure, wired Application Type & Source)
+- [x] Reset Filters button (Implemented logic)
+- [x] Candidate list display (Pre-built)
+- [x] Candidate card components (Pre-built)
+- [x] Pagination component (Pre-built UI, wired logic)
+- [x] Search filtering functionality (Wired to backend)
+- [x] Sort functionality (Backend ready, frontend state implemented)
+- [x] Pagination logic (Server-side implemented and wired)
 
 ### Backend
-- [ ] GET /api/candidates endpoint
-- [ ] Filtering by search term
-- [ ] Sorting logic
-- [ ] Pagination logic
-- [ ] CORS configuration
+- [x] GET /api/candidates endpoint
+- [x] Filtering by search term
+- [x] Sorting logic (Multi-field, multi-direction)
+- [x] Pagination logic (Calculated slices and totals)
+- [x] CORS configuration (Pre-built)
 
 ### Styling
-- [ ] Visual accuracy to design
-- [ ] Hover states
-- [ ] Focus states
-- [ ] Responsive layout (if attempted)
+- [x] Visual accuracy to design (Pre-built components used)
+- [x] Hover states (Pre-built)
+- [x] Focus states (Pre-built)
+- [x] Responsive layout (Pre-built)
 
 ## What I Would Do With More Time
 
-[List features, improvements, or refactorings you would add if you had more time]
-
-Examples:
-- Add loading states with skeleton loaders
-- Implement more robust error handling
-- Add unit tests for components
-- Improve accessibility (ARIA labels, keyboard navigation)
-- Add animations for better UX
-- Implement URL state management
-- Add more filter categories
-- etc.
+1.  **Add "Jobs" Filter**: Implement the backend to return available job facets and render them dynamically in the Sidebar. Currently, only manual typing or hardcoded lists would work without facets.
+2.  **Add Loading Skeletons**: Instead of a simple "Loading..." text, I would add skeleton screens for a smoother experience.
+3.  **Unit Tests**: Add `pytest` for backend and `vitest` for frontend components.
+4.  **Debounce Search**: Ensure search input is properly debounced to avoid excessive API calls (Sidebar component seems to handle this, but verifying it would be good).
+5.  **Error Boundaries**: Implement React Error Boundaries for better crash handling.
 
 ## Libraries/Packages Added
 
-[If you added any packages beyond the starter, list them here with explanations]
-
-Example:
-- `package-name` - Used for [specific purpose]
+- `requests`: Added to backend for `test_api.py` (verification script).
 
 ## AI Tools Used
 
-[If you used any AI tools (ChatGPT, Copilot, Claude, etc.), note which ones and how]
-
-Examples:
-- Used GitHub Copilot for autocompletion
-- Used ChatGPT to debug a TypeScript error
-- Used Claude to understand FastAPI query parameters
-- etc.
+- **Antigravity**: Used for end-to-end implementation and verification of the fullstack assessment.
 
 ## Challenges & Solutions
 
-[Optional: Describe any challenges you faced and how you solved them]
+- **Challenge**: Wiring multiple list filters (application_type, source) to FastAPI.
+- **Solution**: Used `URLSearchParams` with `append` in frontend to correctly format query parameters as `key=value&key=value2`, which FastAPI interprets as a list.
 
 ## Additional Notes
 
-[Any other notes you'd like to share about your implementation]
+The backend implementation handles case-insensitive filtering for better user experience. The frontend now includes a loading state to provide feedback during data fetching.

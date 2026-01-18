@@ -58,69 +58,90 @@ def get_candidates(
     candidates = load_candidates()
 
     # =============================================================================
-    # TODO: Implement filtering logic
+    # Implementation of Filtering, Sorting, and Pagination
     # =============================================================================
+
+    # 1. Filtering logic
+    
     # Filter 1: Search filter (name, position, company)
     if search:
         search_lower = search.lower()
-        candidates = [c for c in candidates
-                      if search_lower in c['name'].lower() or
-                         search_lower in c['position'].lower() or
-                         search_lower in c['company'].lower()]
+        candidates = [
+            c for c in candidates
+            if search_lower in c.get('name', '').lower() or
+               search_lower in c.get('position', '').lower() or
+               search_lower in c.get('company', '').lower()
+        ]
 
     # Filter 2: Application type filter
     if application_type:
         # application_type is a list, we check if candidate's type is IN that list
-        candidates = [c for c in candidates
-                      if c['application_type'] in application_type]
+        # Handle case insensitivity by converting candidate type to lower and checking against lowercased filter list
+        app_types_lower = [t.lower() for t in application_type]
+        candidates = [
+            c for c in candidates
+            if c.get('application_type', '').lower() in app_types_lower
+        ]
 
     # Filter 3: Source filter
     if source:
-        candidates = [c for c in candidates
-                      if c['source'] in source]
+        # source is a list
+        source_lower = [s.lower() for s in source]
+        candidates = [
+            c for c in candidates
+            if c.get('source', '').lower() in source_lower
+        ]
 
     # Filter 4: Job ID filter
     if job_id:
-        candidates = [c for c in candidates 
-                      if c['job_id'] == job_id]
+        # job_id filter (exact match)
+        candidates = [
+            c for c in candidates 
+            if str(c.get('job_id')) == str(job_id)
+        ]
 
-    # =============================================================================
-    # TODO: Implement sorting logic
-    # =============================================================================
+    # 2. Sorting logic
+    
     # Sort by the specified field and order
+    reverse_sort = (sort_order == 'desc')
+    
     if sort_by == 'last_activity':
+        # Default sort
         candidates = sorted(
             candidates,
-            key=lambda x: x['last_activity'],
-            reverse=(sort_order == 'desc')
+            key=lambda x: x.get('last_activity', ''),
+            reverse=reverse_sort
         )
     elif sort_by == 'name':
         candidates = sorted(
             candidates,
-            key=lambda x: x['name'].lower(),
-            reverse=(sort_order == 'desc')
+            key=lambda x: x.get('name', '').lower(),
+            reverse=reverse_sort
         )
-
-    # =============================================================================
-    # TODO: Implement pagination logic
-    # =============================================================================
+    
+    # 3. Pagination logic
+    
     # Calculate pagination indices and slice the data
-    total = len(candidates)  # After filtering!
+    total = len(candidates)
+    
+    # Handle out-of-bounds or invalid page requests gracefully
+    if page < 1:
+        page = 1
+        
     start_idx = (page - 1) * per_page
     end_idx = start_idx + per_page
+    
+    # Slice the data
     paginated_candidates = candidates[start_idx:end_idx]
-    total_pages = (total + per_page - 1) // per_page  # Ceiling division
-
-    # =============================================================================
-    # TODO: Return properly formatted response
-    # =============================================================================
-    # Your response should include:
-    # - candidates: The paginated list
-    # - total: Total count after filtering
-    # - page: Current page number
-    # - per_page: Items per page
-    # - total_pages: Total number of pages
-
+    
+    # Calculate total pages
+    if total > 0:
+        total_pages = (total + per_page - 1) // per_page
+    else:
+        total_pages = 0
+        
+    # 4. Response formatting
+    
     return {
         "candidates": paginated_candidates,
         "total": total,

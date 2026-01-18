@@ -16,12 +16,21 @@ function App() {
     source: [] as string[],
   });
 
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [sort, setSort] = useState({ by: 'last_activity', order: 'desc' });
+
   const fetchCandidates = useCallback(async () => {
+    setIsLoading(true);
+    setError(null);
     try {
       const params = new URLSearchParams();
       params.append('page', currentPage.toString());
       params.append('per_page', '5');
       if (searchValue) params.append('search', searchValue);
+
+      params.append('sort_by', sort.by);
+      params.append('sort_order', sort.order);
 
       filters.application_type.forEach(type => params.append('application_type', type));
       filters.source.forEach(source => params.append('source', source));
@@ -35,8 +44,11 @@ function App() {
       setTotal(data.total);
     } catch (error) {
       console.error('Error fetching candidates:', error);
+      setError('Failed to load candidates. Please try again.');
+    } finally {
+      setIsLoading(false);
     }
-  }, [currentPage, searchValue, filters]);
+  }, [currentPage, searchValue, filters, sort]);
 
   useEffect(() => {
     fetchCandidates();
@@ -49,6 +61,11 @@ function App() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleSortChange = (by: string, order: string) => {
+    setSort({ by, order });
+    setCurrentPage(1);
   };
 
   const handleFilterChange = (category: 'application_type' | 'source', value: string) => {
@@ -70,6 +87,7 @@ function App() {
       source: []
     });
     setSearchValue('');
+    setSort({ by: 'last_activity', order: 'desc' });
     setCurrentPage(1);
   }
 
@@ -86,6 +104,8 @@ function App() {
           filters={filters}
           onFilterChange={handleFilterChange}
           onResetFilters={handleResetFilters}
+          sort={sort}
+          onSortChange={handleSortChange}
         />
 
         {/* Main Content */}
@@ -108,7 +128,15 @@ function App() {
           </div>
 
           {/* Candidate List */}
-          {candidates.length > 0 ? (
+          {isLoading ? (
+            <div className="bg-white border-l border-r border-[#e1e1e1] p-8 text-center text-gray-500">
+              Loading candidates...
+            </div>
+          ) : error ? (
+            <div className="bg-white border-l border-r border-[#e1e1e1] p-8 text-center text-red-500">
+              {error}
+            </div>
+          ) : candidates.length > 0 ? (
             <div className="bg-white border-l border-r border-[#e1e1e1]">
               {candidates.map((candidate) => (
                 <CandidateCard key={candidate.id} candidate={candidate} />
@@ -121,7 +149,7 @@ function App() {
           )}
 
           {/* Pagination */}
-          {totalPages > 1 && (
+          {!isLoading && !error && totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
               totalPages={totalPages}
