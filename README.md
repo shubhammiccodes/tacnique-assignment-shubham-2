@@ -1,10 +1,6 @@
-# Fullstack Take-Home Assessment
+# Fullstack Assessment
+FastAPI backend development and React frontend integration.
 
-Welcome! This assessment is designed to evaluate your skills in FastAPI backend development and React frontend integration.
-
-## Time Expectation
-
-**1 hour and 30 minutes**. We understand this is limited time, so focus on:
 1. **Backend implementation** (70% of assessment)
 2. Frontend wiring (30% of assessment)
 3. Correct functionality over additional features
@@ -192,7 +188,6 @@ When complete:
    - Delete `node_modules/` and `venv/` before zipping
    - Keep `.git` folder if you used git
 
-4. **Email it back to us**
 
 ## Tips for Success
 
@@ -202,8 +197,3 @@ When complete:
 4. **Get it working first** - Perfect is the enemy of good
 5. **Frontend is mostly done** - Just wire it up, don't rebuild components
 
-## Questions?
-
-If you have questions during the assessment, please reach out to [your-email@company.com].
-
-Good luck! We're excited to see your backend skills.
