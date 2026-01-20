@@ -56,12 +56,13 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
       {/* Availability Section (if applicable) */}
       {candidate.has_availability && (
         <div className="grid grid-cols-[345px_1fr] py-3 border-t border-gray-200">
-          <div className="px-5" />
-          <div className="px-4 flex items-center gap-4">
+          <div className="px-5 flex items-center gap-4">
             <span className="text-sm text-gray-700">Availability</span>
             <span className="px-2.5 py-1 text-sm bg-gray-100 rounded">
               {candidate.availability_status}
             </span>
+          </div>
+          <div className="px-4 flex items-center">
             <a
               href="#"
               className="text-sm text-primary hover:underline"
@@ -77,10 +78,10 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
       {candidate.has_interviews && candidate.interviews && (
         <>
           <div className="grid grid-cols-[345px_1fr] py-2.5 border-t border-gray-200">
-            <div className="px-5" />
-            <div className="px-4">
+            <div className="px-5">
               <span className="text-sm font-medium text-gray-700">Interviews</span>
             </div>
+            <div className="px-4" />
           </div>
           {candidate.interviews.map((interview, idx) => (
             <div

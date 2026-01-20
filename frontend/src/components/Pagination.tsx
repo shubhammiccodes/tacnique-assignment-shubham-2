@@ -13,21 +13,38 @@ export const Pagination: React.FC<PaginationProps> = ({
   const getPageNumbers = () => {
     const pages: (number | string)[] = [];
 
-    if (totalPages <= 9) {
-      // Show all pages if 9 or fewer
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
     } else {
-      // Show 1-9, ..., last 2 pages
-      for (let i = 1; i <= Math.min(9, totalPages); i++) {
+      // Always show first
+      pages.push(1);
+
+      if (currentPage > 3) {
+        pages.push('...');
+      }
+
+      // Calculate start and end of neighbors
+      let start = Math.max(2, currentPage - 1);
+      let end = Math.min(totalPages - 1, currentPage + 1);
+
+      // Adjust if near beginning or end
+      if (currentPage <= 3) {
+        end = 4;
+      }
+      if (currentPage >= totalPages - 2) {
+        start = totalPages - 3;
+      }
+
+      for (let i = start; i <= end; i++) {
         pages.push(i);
       }
-      if (totalPages > 10) {
+
+      if (currentPage < totalPages - 2) {
         pages.push('...');
-        pages.push(totalPages - 1);
-        pages.push(totalPages);
       }
+
+      // Always show last
+      pages.push(totalPages);
     }
 
     return pages;
@@ -39,6 +56,7 @@ export const Pagination: React.FC<PaginationProps> = ({
     <div className="flex items-center justify-center gap-0 mt-8 h-[36px]">
       {/* Previous Button */}
       <button
+        type="button"
         onClick={() => onPageChange(currentPage - 1)}
         disabled={currentPage === 1}
         className="w-[34px] h-[36px] flex items-center justify-center rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"
@@ -63,13 +81,15 @@ export const Pagination: React.FC<PaginationProps> = ({
 
         return (
           <button
+            type="button"
             key={pageNum}
-            onClick={() => onPageChange(pageNum)}
-            className={`min-w-[40px] h-[35.5px] px-4 text-[16px] leading-[19.5px] rounded ${
-              isActive
-                ? 'bg-[#eff1f0] text-[#15372c] font-bold'
-                : 'text-[#15372c] font-normal hover:bg-gray-50'
-            }`}
+            onClick={() => {
+              onPageChange(pageNum);
+            }}
+            className={`min-w-[40px] h-[35.5px] px-4 text-[16px] leading-[19.5px] rounded ${isActive
+              ? 'bg-[#eff1f0] text-[#15372c] font-bold'
+              : 'text-[#15372c] font-normal hover:bg-gray-50'
+              }`}
           >
             {pageNum}
           </button>
@@ -78,6 +98,7 @@ export const Pagination: React.FC<PaginationProps> = ({
 
       {/* Next Button */}
       <button
+        type="button"
         onClick={() => onPageChange(currentPage + 1)}
         disabled={currentPage === totalPages}
         className="w-[34px] h-[36px] flex items-center justify-center rounded disabled:opacity-50 disabled:cursor-not-allowed hover:bg-gray-50"

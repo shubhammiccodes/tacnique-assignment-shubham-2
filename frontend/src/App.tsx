@@ -54,21 +54,21 @@ function App() {
     fetchCandidates();
   }, [fetchCandidates]);
 
-  const handleSearchChange = (value: string) => {
+  const handleSearchChange = useCallback((value: string) => {
     setSearchValue(value);
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handlePageChange = (page: number) => {
+  const handlePageChange = useCallback((page: number) => {
     setCurrentPage(page);
-  };
+  }, []);
 
-  const handleSortChange = (by: string, order: string) => {
+  const handleSortChange = useCallback((by: string, order: string) => {
     setSort({ by, order });
     setCurrentPage(1);
-  };
+  }, []);
 
-  const handleFilterChange = (category: 'application_type' | 'source', value: string) => {
+  const handleFilterChange = useCallback((category: 'application_type' | 'source', value: string) => {
     setFilters(prev => {
       const newFilters = { ...prev };
       if (newFilters[category].includes(value)) {
@@ -79,9 +79,9 @@ function App() {
       return newFilters;
     });
     setCurrentPage(1); // Reset to page 1 for new filters
-  };
+  }, []);
 
-  const handleResetFilters = () => {
+  const handleResetFilters = useCallback(() => {
     setFilters({
       application_type: [],
       source: []
@@ -89,7 +89,7 @@ function App() {
     setSearchValue('');
     setSort({ by: 'last_activity', order: 'desc' });
     setCurrentPage(1);
-  }
+  }, []);
 
   return (
     <div className="min-h-screen bg-[#f7f8f7]">
@@ -116,8 +116,49 @@ function App() {
             <p className="text-[13.8px] text-[#222222]">
               Showing {total} candidate applications
             </p>
-            {/* TODO: Add action buttons (Generate Report, Add Candidate, Bulk Actions) */}
+            <div className="ml-auto flex items-center gap-2">
+              <button className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                Application Review
+              </button>
+              <button className="px-3 py-1.5 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded hover:bg-gray-50">
+                Collect Feedback
+              </button>
+            </div>
           </div>
+
+          {/* Active Filters */}
+          {(filters.application_type.length > 0 || filters.source.length > 0) && (
+            <div className="flex flex-wrap items-center gap-2 mb-4">
+              {filters.application_type.map((type) => (
+                <span key={`type-${type}`} className="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#e6f4f1] text-[#15372c]">
+                  {type}
+                  <button
+                    onClick={() => handleFilterChange('application_type', type)}
+                    className="ml-1.5 text-[#15372c] hover:text-[#0b1d17] focus:outline-none"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              {filters.source.map((src) => (
+                <span key={`source-${src}`} className="inline-flex items-center px-2.5 py-1 rounded-[4px] text-xs font-medium bg-[#e6f4f1] text-[#15372c]">
+                  {src}
+                  <button
+                    onClick={() => handleFilterChange('source', src)}
+                    className="ml-1.5 text-[#15372c] hover:text-[#0b1d17] focus:outline-none"
+                  >
+                    ×
+                  </button>
+                </span>
+              ))}
+              <button
+                onClick={handleResetFilters}
+                className="text-xs text-blue-600 hover:text-blue-800 hover:underline px-1"
+              >
+                Clear all
+              </button>
+            </div>
+          )}
 
           {/* Candidate List Header */}
           <div className="bg-neutral-50 border border-[#e1e1e1] border-b-0 rounded-t mb-0">
